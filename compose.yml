@@ -1,0 +1,16 @@
+services:
+  meet:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: livekit-meet
+    ports:
+      - "3000:3000"
+    environment:
+      - LIVEKIT_API_KEY
+      - LIVEKIT_API_SECRET
+      - LIVEKIT_URL
+      - NEXT_PUBLIC_LK_TOKEN_ENDPOINT
+      - NEXT_PUBLIC_SHOW_SETTINGS_MENU
+      - NEXT_PUBLIC_DATADOG_CLIENT_TOKEN
+      - NEXT_PUBLIC_DATADOG_SITE
