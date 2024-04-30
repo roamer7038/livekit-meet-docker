@@ -1,39 +1,42 @@
-# ビルドステージ
+# Build stage
 FROM node:20-alpine as builder
 
-# pnpm インストール
+# Install pnpm
 RUN npm install -g pnpm
 
-# 必要なツールのインストール
+# Install necessary tools
 RUN apk add --no-cache git sed
 
-# アプリケーションのソースコードを取得
+# Fetch the application source code
 WORKDIR /app
 RUN git clone -b main https://github.com/livekit-examples/meet.git .
 
-# standaloneモードの設定を追加
+# Add 'standalone' mode configuration to next.config.js
 RUN if ! grep -q "output: 'standalone'" next.config.js; then \
-      sed -i "/^const nextConfig = {/a \  output: 'standalone'," next.config.js; \
-    fi
+  sed -i "/^const nextConfig = {/a \  output: 'standalone'," next.config.js; \
+  fi
 
-# 依存関係をインストール
+# Install dependencies
 RUN pnpm install
 
-# アプリケーションをビルド
+# Set environment variables
+ENV NEXT_PUBLIC_LK_TOKEN_ENDPOINT=/api/token
+
+# Build the application
 RUN pnpm run build
 
-# 実行ステージ
+# Runtime stage
 FROM node:20-alpine
 WORKDIR /app
 
-# ビルドされたファイルと必要なリソースをコピー
+# Copy built files and necessary resources
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# 環境変数を設定
+# Set environment variables
 ENV PORT 3000
 EXPOSE 3000
 
-# アプリケーションを起動
+# Start the application
 CMD ["node", "server.js"]

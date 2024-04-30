@@ -4,13 +4,46 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: livekit-meet
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - LIVEKIT_API_KEY
       - LIVEKIT_API_SECRET
       - LIVEKIT_URL
-      - NEXT_PUBLIC_LK_TOKEN_ENDPOINT
-      - NEXT_PUBLIC_SHOW_SETTINGS_MENU
-      - NEXT_PUBLIC_DATADOG_CLIENT_TOKEN
-      - NEXT_PUBLIC_DATADOG_SITE
+
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: livekit-server
+    restart: unless-stopped
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "3478:3478/udp"
+      - "5349:5349"
+      - "50000-50005:50000-50005/udp"
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+    command: --dev --config /etc/livekit.yaml
+
+  caddy:
+    image: ghcr.io/roamer7038/caddy-l4-docker:latest
+    container_name: caddy-l4
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      - LIVEKIT_MEET_FQDN
+      - LIVEKIT_SERVER_FQDN
+      - LIVEKIT_TURN_FQDN
+    volumes:
+      - ./caddy.yaml:/etc/caddy/caddy.yaml:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    command: run --config /etc/caddy/caddy.yaml --adapter yaml
+
+volumes:
+  caddy_data:
+  caddy_config:

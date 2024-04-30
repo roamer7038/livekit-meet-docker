@@ -1,0 +1,43 @@
+apps:
+  tls:
+    certificates:
+      automate:
+        - "#{$LIVEKIT_MEET_FQDN}"
+        - "#{$LIVEKIT_SERVER_FQDN}"
+        - "#{$LIVEKIT_TURN_FQDN}"
+  layer4:
+    servers:
+      main:
+        listen: [":443"]
+        routes:
+          - match:
+              - tls:
+                  sni:
+                    - "#{$LIVEKIT_MEET_FQDN}"
+            handle:
+              - handler: tls
+                connection_policies:
+                  - alpn: ["http/1.1", "http/2"]
+              - handler: proxy
+                upstreams:
+                  - dial: ["livekit-meet:3000"]
+          - match:
+              - tls:
+                  sni:
+                    - "#{$LIVEKIT_SERVER_FQDN}"
+            handle:
+              - handler: tls
+                connection_policies:
+                  - alpn: ["http/1.1"]
+              - handler: proxy
+                upstreams:
+                  - dial: ["livekit-server:7880"]
+          - match:
+              - tls:
+                  sni:
+                    - "#{$LIVEKIT_TURN_FQDN}"
+            handle:
+              - handler: tls
+              - handler: proxy
+                upstreams:
+                  - dial: ["livekit-server:5349"]
