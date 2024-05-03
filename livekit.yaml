@@ -31,8 +31,8 @@ port: 7880
 rtc:
   # UDP ports to use for client traffic.
   # this port range should be open for inbound traffic on the firewall
-  port_range_start: 50000
-  port_range_end: 50009
+  # port_range_start: 50000
+  # port_range_end: 50009
   # when set, LiveKit enable WebRTC ICE over TCP when UDP isn't available
   # this port *cannot* be behind load balancer or TLS, and must be exposed on the node
   # WebRTC transports are encrypted and do not require additional encryption
@@ -46,7 +46,7 @@ rtc:
   # # listed port(s). To maximize system performance, we recommend using a range of ports
   # # greater or equal to the number of vCPUs on the machine.
   # # port_range_start & end must not be set for this config to take effect
-  # udp_port: 7882-7892
+  udp_port: 7882
   # # when set to true, server will use a lite ice agent, that will speed up ice connection, but
   # # might cause connect issue if server running behind NAT.
   # use_ice_lite: true

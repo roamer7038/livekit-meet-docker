@@ -49,11 +49,11 @@ You will need three publicly accessible servers, configured with the following d
 - LIVEKIT_TURN_FQDN=livekit-turn.example.com
 
 Please ensure the following ports are open:
-- 443 - primary HTTPS and TURN/TLS
 - 80 - TLS issuance
-- 7881 - WebRTC over TCP
+- 443 - primary HTTPS and TURN/TLS
 - 3478/UDP - TURN/UDP
-- 50000-50009/UDP - WebRTC over UDP
+- 7881 - WebRTC over TCP
+- 7882/UDP - WebRTC over UDP
 
 ## Additional Resources
 

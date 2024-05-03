@@ -19,9 +19,9 @@ services:
     ports:
       - "7880:7880"
       - "7881:7881"
+      - "7882:7882/udp"
       - "3478:3478/udp"
       - "5349:5349"
-      - "50000-50005:50000-50005/udp"
     volumes:
       - ./livekit.yaml:/etc/livekit.yaml:ro
     command: --dev --config /etc/livekit.yaml
@@ -33,7 +33,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "443:443/udp"
     environment:
       - LIVEKIT_MEET_FQDN
       - LIVEKIT_SERVER_FQDN
